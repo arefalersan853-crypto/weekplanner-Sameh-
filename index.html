@@ -39,7 +39,7 @@ Woensdag:[["14:30–16:30","Thuiskomen, eten, rusten en spelen"],["16:30–17:10
 Donderdag:[["14:30–16:30","Thuiskomen, eten, rusten en spelen"],["16:30–17:10","Nederlands lezen"],["17:10–19:00","Spelen, eten en rust"],["19:35–20:15","Koranles"],["20:15–21:00","Rustig worden en klaarmaken voor bed"],["21:00","In bed en slapen"]],
 Vrijdag:[["Overdag","Vrije dag — rust en spelen"],["16:00–16:40","Rekenen"],["Na 16:40","Spelen en familietijd"],["21:00","In bed en slapen"]],
 Zaterdag:[["Hele dag","Volledig vrij — spelen, rusten en familietijd"],["21:00","In bed en slapen"]],
-Zondag:[["Overdag","Rust en spelen"],["19:35–20:15","Koranles"],["20:15–21:00","Klaarmaken voor bed"],["21:00","In bed en slapen"]],
+Zondag:[["Overdag","Rust en spelen"],["19:35–20:15","Koranles"],["20:15–21:00","Vrije tijd"],["21:00","In bed en slapen"]],
 const days=Object.keys(data), daysEl=document.getElementById("days"),tasksEl=document.getElementById("tasks"),dayEl=document.getElementById("day"),progressEl=document.getElementById("progress");
 let current=new Intl.DateTimeFormat("nl-NL",{weekday:"long"}).format(new Date());
 current=current.charAt(0).toUpperCase()+current.slice(1); if(!data[current]) current="Maandag";
