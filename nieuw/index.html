@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.json">
+<title>Mijn Weekplanner</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f6f7fb;color:#172033}
+.app{max-width:760px;margin:auto;padding:20px 16px 30px}
+.hero{background:#fff;border-radius:24px;padding:20px 16px;box-shadow:0 4px 18px #00000014;text-align:center}
+.hero h1{font-size:22px;margin:0 0 10px}
+.hero p{margin:5px 0;font-size:15px}
+.days{display:flex;gap:8px;overflow:auto;padding:16px 2px}
+.day{border:1px solid #d7dbe5;background:#fff;border-radius:16px;padding:12px 14px;font-weight:700;white-space:nowrap;cursor:pointer}
+.day.active{border-color:#7b83ff;background:#f1f2ff}
+.card{background:#fff;border-radius:20px;padding:16px;box-shadow:0 4px 18px #00000014}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.top h2{margin:0}
+.reset{border:1px solid #d7dbe5;background:#fff;border-radius:12px;padding:10px 14px;cursor:pointer}
+.task{display:grid;grid-template-columns:28px 115px 1fr;gap:10px;align-items:center;border:1px solid #e1e4eb;border-radius:15px;padding:12px;margin-top:10px}
+.task input{width:24px;height:24px}
+.time{font-weight:700}
+.note,.bed{text-align:center;margin-top:18px}
+.bed{font-weight:700}
+.progress{color:#687086;margin-top:6px}
+@media(max-width:520px){.task{grid-template-columns:28px 95px 1fr;font-size:14px}}
+</style>
+</head>
+<body>
+<main class="app">
+<section class="hero">
+<h1>❤️ Ik hou van jou. Ik vertrouw op jou!</h1>
+<p><b>Jij bent een dappere, slimme en sterke jongen.</b></p>
+<p>Blijf leren. Blijf groeien. Help anderen.</p>
+<p>Geloof in jezelf en geef nooit op.</p>
+<p>Jouw toekomst is groot en mooi.</p>
+<p><b>Papa en mama geloven in jou! ❤️</b></p>
+</section>
+
+<nav class="days" id="days" aria-label="Dagen"></nav>
+
+<section class="card">
+<div class="top">
+<div>
+<h2 id="day"></h2>
+<div class="progress" id="progress"></div>
+</div>
+<button class="reset" id="reset">Opnieuw</button>
+</div>
+<div id="tasks"></div>
+</section>
+
+<div class="bed">⭐ Elke dag om 21:00: in bed en slapen.</div>
+<div class="note">Tik op □ wanneer je een taak hebt gedaan.</div>
+</main>
+
+<script>
+const data={
+Maandag:[
+["14:30–16:30","Thuiskomen, eten, rusten en spelen"],
+["16:30–17:10","Arabisch lezen"],
+["17:10–19:00","Spelen, eten en rust"],
+["19:35–20:15","Koranles"],
+["20:15–21:00","Vrije tijd"],
+["21:00","In bed en slapen"]
+],
+Dinsdag:[
+["14:30–16:30","Thuiskomen, eten en rusten"],
+["16:30–17:10","Arabisch lezen"],
+["17:20–18:00","Rekenen"],
+["18:00–19:00","Eten en rust"],
+["19:35–20:15","Koranles"],
+["20:15–21:00","Vrije tijd"],
+["21:00","In bed en slapen"]
+],
+Woensdag:[
+["14:30–16:30","Thuiskomen, eten en rust"],
+["16:30–17:10","Nederlands lezen"],
+["17:10–19:00","Spelen, eten en rust"],
+["19:35–20:15","Koranles"],
+["20:15–21:00","Vrije tijd"],
+["21:00","In bed en slapen"]
+],
+Donderdag:[
+["14:30–16:30","Thuiskomen, eten, rusten en spelen"],
+["16:30–17:10","Nederlands lezen"],
+["17:10–19:00","Spelen, eten en rust"],
+["19:35–20:15","Koranles"],
+["20:15–21:00","Vrije tijd"],
+["21:00","In bed en slapen"]
+],
+Vrijdag:[
+["Overdag","Vrije dag — rust en spelen"],
+["16:00–16:40","Rekenen"],
+["Na 16:40","Spelen en familietijd"],
+["21:00","In bed en slapen"]
+],
+Zaterdag:[
+["Hele dag","Volledig vrij – spelen, rusten en familietijd"],
+["21:00","In bed en slapen"]
+],
+Zondag:[
+["Overdag","Rust en spelen"],
+["19:35–20:15","Koranles"],
+["20:15–21:00","Vrije tijd"],
+["21:00","In bed en slapen"]
+]
+};
+
+const days=Object.keys(data);
+const daysEl=document.getElementById("days");
+const dayEl=document.getElementById("day");
+const tasksEl=document.getElementById("tasks");
+const progressEl=document.getElementById("progress");
+const stateKey="weekplanner_state_v3";
+let saved=JSON.parse(localStorage.getItem(stateKey)||"{}");
+
+function save(){localStorage.setItem(stateKey,JSON.stringify(saved));}
+
+function render(current){
+dayEl.textContent=current;
+tasksEl.innerHTML="";
+const arr=data[current];
+if(!saved[current]) saved[current]=arr.map(()=>false);
+arr.forEach((item,i)=>{
+const row=document.createElement("label");
+row.className="task";
+const cb=document.createElement("input");
+cb.type="checkbox";
+cb.checked=!!saved[current][i];
+cb.addEventListener("change",()=>{
+saved[current][i]=cb.checked;
+save();
+render(current);
+});
+const t=document.createElement("div");
+t.className="time";
+t.textContent=item[0];
+const desc=document.createElement("div");
+desc.textContent=item[1];
+row.append(cb,t,desc);
+tasksEl.appendChild(row);
+});
+const done=saved[current].filter(Boolean).length;
+progressEl.textContent=`${done} van ${arr.length} taken klaar`;
+document.querySelectorAll(".day").forEach(b=>b.classList.toggle("active",b.textContent===current));
+save();
+}
+
+days.forEach(d=>{
+const b=document.createElement("button");
+b.className="day";
+b.textContent=d;
+b.onclick=()=>render(d);
+daysEl.appendChild(b);
+});
+
+document.getElementById("reset").onclick=()=>{
+const current=dayEl.textContent;
+saved[current]=data[current].map(()=>false);
+save();
+render(current);
+};
+
+const weekday=new Intl.DateTimeFormat("nl-NL",{weekday:"long"}).format(new Date());
+let current=days.find(d=>d.toLowerCase()===weekday.toLowerCase())||"Maandag";
+render(current);
+
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+</script>
+</body>
+</html>
