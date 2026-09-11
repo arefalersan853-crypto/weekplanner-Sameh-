@@ -6,15 +6,108 @@
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="manifest.json">
 <title>Mijn Weekplanner</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f6f7fb;color:#172033}
-.app{max-width:760px;margin:auto;padding:20px 16px 30px}.hero{text-align:center;background:white;border-radius:24px;padding:20px 16px;box-shadow:0 4px 18px #0000000d}
-.hero h1{font-size:22px;margin:0 0 10px}.hero p{margin:5px 0;font-size:15px}.days{display:flex;gap:8px;overflow:auto;padding:16px 2px}.day{border:1px solid #d7dbe5;background:white;border-radius:14px;padding:12px 14px;font-weight:700;white-space:nowrap;cursor:pointer}.day.active{background:#e9edff;border-color:#6b78d6}
-.card{background:white;border-radius:20px;padding:16px;box-shadow:0 4px 18px #0000000d}.top{display:flex;justify-content:space-between;gap:10px;align-items:center}.top h2{margin:0;font-size:20px}.progress{color:#687083;font-size:14px;margin-top:4px}.reset{border:1px solid #d7dbe5;background:white;border-radius:10px;padding:9px 12px;cursor:pointer}.task{display:flex;align-items:center;gap:12px;border:1px solid #e1e4eb;border-radius:14px;padding:12px;margin-top:9px;cursor:pointer}.task input{width:23px;height:23px;flex:none}.task.done{opacity:.5;text-decoration:line-through}.time{font-weight:700;width:105px;flex:none;font-size:13px}.name{font-size:14px}.bed{text-align:center;font-weight:800;margin:15px 0 0}.note{text-align:center;color:#687083;font-size:13px;margin-top:12px}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f6f7fb;
+  color:#172033;
+}
+.app{
+  max-width:760px;
+  margin:auto;
+  padding:20px 16px 30px;
+}
+.hero{
+  text-align:center;
+  background:white;
+  border-radius:24px;
+  padding:20px 16px;
+  box-shadow:0 4px 18px #00000014;
+}
+.hero h1{
+  font-size:22px;
+  margin:0 0 10px;
+}
+.hero p{
+  margin:6px 0;
+  font-size:15px;
+}
+.days{
+  display:flex;
+  gap:8px;
+  overflow:auto;
+  padding:16px 2px;
+}
+.day{
+  border:1px solid #d7dbe5;
+  background:white;
+  border-radius:16px;
+  padding:12px 14px;
+  font-weight:700;
+  white-space:nowrap;
+  cursor:pointer;
+}
+.day.active{
+  border-color:#7b83ff;
+  background:#f1f2ff;
+}
+.card{
+  background:white;
+  border-radius:20px;
+  padding:16px;
+  box-shadow:0 4px 18px #00000014;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.top h2{margin:0}
+.reset{
+  border:1px solid #d7dbe5;
+  background:white;
+  border-radius:12px;
+  padding:10px 14px;
+  cursor:pointer;
+}
+.task{
+  display:grid;
+  grid-template-columns:28px 115px 1fr;
+  gap:10px;
+  align-items:center;
+  border:1px solid #e1e4eb;
+  border-radius:15px;
+  padding:12px;
+  margin-top:10px;
+}
+.task input{
+  width:24px;
+  height:24px;
+}
+.time{font-weight:700}
+.progress{
+  color:#687086;
+  margin:6px 0 10px;
+}
+.note{
+  text-align:center;
+  margin-top:18px;
+}
+.bed{
+  text-align:center;
+  font-weight:700;
+  margin-top:18px;
+}
 </style>
 </head>
+
 <body>
-<main class="app" id="app">
+<main class="app">
+
 <section class="hero">
 <h1>❤️ Ik hou van jou. Ik vertrouw op jou!</h1>
 <p><b>Jij bent een dappere, slimme en sterke jongen.</b></p>
@@ -23,32 +116,177 @@
 <p>Jouw toekomst is groot en mooi.</p>
 <p><b>Papa en mama geloven in jou! ❤️</b></p>
 </section>
-<nav class="days" id="days" aria-label="Dagen"></nav>
+
+<nav class="days" id="days"></nav>
+
 <section class="card">
-<div class="top"><div><h2 id="day"></h2><div class="progress" id="progress"></div></div><button class="reset" id="reset">Opnieuw</button></div>
+<div class="top">
+<div>
+<h2 id="day"></h2>
+<div class="progress" id="progress"></div>
+</div>
+<button class="reset" id="reset">Opnieuw</button>
+</div>
+
 <div id="tasks"></div>
 </section>
+
 <div class="bed">⭐ Elke dag om 21:00: in bed en slapen.</div>
-<div class="note">Tik op ☐ wanneer je een taak hebt gedaan.</div>
+<div class="note">Tik op □ wanneer je een taak hebt gedaan.</div>
+
 </main>
+
 <script>
 const data={
-Maandag:[["14:30–16:30","Thuiskomen, eten, rusten en spelen"],["16:30–17:10","Arabisch lezen"],["17:10–19:00","Spelen, eten en rust"],["19:35–20:15","Koranles"],["20:15–21:00","Rustig worden en klaarmaken voor bed"],["21:00","In bed en slapen"]],
-Dinsdag:[["14:30–16:30","Thuiskomen, eten en rusten"],["16:30–17:10","Arabisch lezen"],["17:20–18:00","Rekenen"],["18:00–19:00","Eten en rust"],["19:35–20:15","Koranles"],["20:15–21:00","Rustig worden en klaarmaken voor bed"],["21:00","In bed en slapen"]],
-Woensdag:[["14:30–16:30","Thuiskomen, eten, rusten en spelen"],["16:30–17:10","Nederlands lezen"],["17:10–19:00","Spelen, eten en rust"],["19:35–20:15","Koranles"],["20:15–21:00","Rustig worden en klaarmaken voor bed"],["21:00","In bed en slapen"]],
-Donderdag:[["14:30–16:30","Thuiskomen, eten, rusten en spelen"],["16:30–17:10","Nederlands lezen"],["17:10–19:00","Spelen, eten en rust"],["19:35–20:15","Koranles"],["20:15–21:00","Rustig worden en klaarmaken voor bed"],["21:00","In bed en slapen"]],
-Vrijdag:[["Overdag","Vrije dag — rust en spelen"],["16:00–16:40","Rekenen"],["Na 16:40","Spelen en familietijd"],["21:00","In bed en slapen"]],
-Zaterdag:[["Hele dag","Volledig vrij — spelen, rusten en familietijd"],["21:00","In bed en slapen"]],
-Zondag:[["Overdag","Rust en spelen"],["19:35–20:15","Koranles"],["20:15–21:00","Vrije tijd"],["21:00","In bed en slapen"]],
-const days=Object.keys(data), daysEl=document.getElementById("days"),tasksEl=document.getElementById("tasks"),dayEl=document.getElementById("day"),progressEl=document.getElementById("progress");
-let current=new Intl.DateTimeFormat("nl-NL",{weekday:"long"}).format(new Date());
-current=current.charAt(0).toUpperCase()+current.slice(1); if(!data[current]) current="Maandag";
-const saved=JSON.parse(localStorage.getItem("weekplanner_state")||"{}");
-days.forEach(d=>{if(!saved[d])saved[d]=data[d].map(()=>false);const b=document.createElement("button");b.className="day";b.textContent=d;b.onclick=()=>{current=d;render()};daysEl.appendChild(b)});
-function save(){localStorage.setItem("weekplanner_state",JSON.stringify(saved))}
-function render(){dayEl.textContent=current;const a=data[current],s=saved[current],n=s.filter(Boolean).length;progressEl.textContent=`${n} van ${a.length} taken klaar`;[...daysEl.children].forEach(b=>b.classList.toggle("active",b.textContent===current));tasksEl.innerHTML="";a.forEach((x,i)=>{const l=document.createElement("label");l.className="task"+(s[i]?" done":"");const c=document.createElement("input");c.type="checkbox";c.checked=s[i];c.onchange=()=>{s[i]=c.checked;save();render()};const t=document.createElement("span");t.className="time";t.textContent=x[0];const q=document.createElement("span");q.className="name";q.textContent=x[1];l.append(c,t,q);tasksEl.appendChild(l)})}
-document.getElementById("reset").onclick=()=>{saved[current]=data[current].map(()=>false);save();render()};render();
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+Maandag:[
+["14:30–16:30","Thuiskomen, eten, rusten en spelen"],
+["16:30–17:10","Arabisch lezen"],
+["17:10–19:35","Spelen, eten en rust"],
+["19:35–20:15","Koranles"],
+["20:15–21:00","Vrije tijd"],
+["21:00","In bed en slapen"]
+],
+
+Dinsdag:[
+["14:30–16:30","Thuiskomen, eten en rusten"],
+["16:30–17:10","Arabisch lezen"],
+["17:20–18:00","Rekenen"],
+["18:00–19:35","Eten en rust"],
+["19:35–20:15","Koranles"],
+["20:15–21:00","Vrije tijd"],
+["21:00","In bed en slapen"]
+],
+
+Woensdag:[
+["14:30–16:30","Thuiskomen, eten, rusten en spelen"],
+["16:30–17:10","Nederlands lezen"],
+["17:10–19:35","Spelen, eten en rust"],
+["19:35–20:15","Koranles"],
+["20:15–21:00","Vrije tijd"],
+["21:00","In bed en slapen"]
+],
+
+Donderdag:[
+["14:30–16:30","Thuiskomen, eten, rusten en spelen"],
+["16:30–17:10","Nederlands lezen"],
+["17:10–19:35","Spelen, eten en rust"],
+["19:35–20:15","Koranles"],
+["20:15–21:00","Vrije tijd"],
+["21:00","In bed en slapen"]
+],
+
+Vrijdag:[
+["Overdag","Vrije dag – rust en spelen"],
+["16:00–16:40","Rekenen"],
+["Na 16:40","Spelen en familietijd"],
+["21:00","In bed en slapen"]
+],
+
+Zaterdag:[
+["Hele dag","Volledig vrij – spelen, rusten en familietijd"],
+["21:00","In bed en slapen"]
+],
+
+Zondag:[
+["Overdag","Rust en spelen"],
+["17:00–17:30","Koran herhalen en voorbereiden"],
+["17:30–19:35","Familietijd en rust"],
+["19:35–20:15","Koranles"],
+["20:15–21:00","Vrije tijd"],
+["21:00","In bed en slapen"]
+]
+
+};
+
+const days=Object.keys(data);
+const daysEl=document.getElementById("days");
+const tasksEl=document.getElementById("tasks");
+const dayEl=document.getElementById("day");
+const progressEl=document.getElementById("progress");
+
+let current=new Intl.DateTimeFormat("nl-NL",{weekday:"long"})
+.format(new Date());
+
+current=current.charAt(0).toUpperCase()+current.slice(1);
+
+if(!data[current]) current="Maandag";
+
+let saved=JSON.parse(localStorage.getItem("weekplanner_new")||"{}");
+
+days.forEach(d=>{
+  const b=document.createElement("button");
+  b.className="day";
+  b.textContent=d;
+  b.onclick=()=>render(d);
+  daysEl.appendChild(b);
+});
+
+function save(){
+  localStorage.setItem("weekplanner_new",JSON.stringify(saved));
+}
+
+function render(day){
+
+  current=day;
+  dayEl.textContent=day;
+
+  document.querySelectorAll(".day").forEach(b=>{
+    b.classList.toggle("active",b.textContent===day);
+  });
+
+  const items=data[day];
+
+  if(!saved[day]) saved[day]=items.map(()=>false);
+
+  tasksEl.innerHTML="";
+
+  items.forEach((item,i)=>{
+
+    const row=document.createElement("div");
+    row.className="task";
+
+    const check=document.createElement("input");
+    check.type="checkbox";
+    check.checked=!!saved[day][i];
+
+    check.onchange=()=>{
+      saved[day][i]=check.checked;
+      save();
+      updateProgress();
+    };
+
+    const time=document.createElement("div");
+    time.className="time";
+    time.textContent=item[0];
+
+    const text=document.createElement("div");
+    text.textContent=item[1];
+
+    row.appendChild(check);
+    row.appendChild(time);
+    row.appendChild(text);
+
+    tasksEl.appendChild(row);
+  });
+
+  updateProgress();
+}
+
+function updateProgress(){
+  const total=data[current].length;
+  const done=saved[current].filter(Boolean).length;
+  progressEl.textContent=`${done} van ${total} taken klaar`;
+}
+
+document.getElementById("reset").onclick=()=>{
+  saved[current]=data[current].map(()=>false);
+  save();
+  render(current);
+};
+
+render(current);
 </script>
+
 </body>
 </html>
